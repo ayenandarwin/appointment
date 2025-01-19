@@ -44,24 +44,24 @@
 //   }
 // }
 
-
 class Appointment {
-  final int id;
+  final int? id;
   final String title;
-  final String description;
-  final String date;
   final String customer_name;
+  final String description;
   final String company;
-  final String? location;  // Mark location as nullable if it can be null
+  final String date;
+
+  final String? location; // Mark location as nullable if it can be null
 
   Appointment({
-    required this.id,
+    this.id,
     required this.title,
-    required this.description,
-    required this.date,
     required this.customer_name,
+    required this.description,
     required this.company,
-    this.location,  // Optional field
+    required this.date,
+    this.location, // Optional field
   });
 
   // Convert Appointment object to a Map (for SQLite database)
@@ -69,25 +69,24 @@ class Appointment {
     return {
       'id': id,
       'title': title,
+      'customer_name': customer_name,
       'description': description,
-      'date': date,
-      'location': location,  // Nullable
+      'company': company,
+      'date_time': date,
+      'location': location, // Nullable
+      // Nullable
     };
   }
 
   factory Appointment.fromMap(Map<String, dynamic> map) {
     return Appointment(
-      id: map['id'],
+      id: int.parse(map['id'].toString()),
       title: map['title'] ?? '',
-      description: map['description'] ?? '',
-      date: map['date_time'] ?? '',
-      location: map['location'],  // Nullable field (no default value needed)
       customer_name: map['customer_name'] ?? '',
+      description: map['description'] ?? '',
       company: map['company'] ?? '',
+      date: map['date_time'] ?? '',
+      location: map['location'], // Nullable field (no default value needed)
     );
   }
 }
-
-
-
-

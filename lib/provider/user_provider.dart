@@ -8,8 +8,6 @@ import '../models/user.dart';
 final dioProvider = Provider((ref) => Dio(BaseOptions(baseUrl: 'http://localhost:3000')));
 
 
-
-
 final userListProvider = StateNotifierProvider<UserListNotifier, List<User>>((ref) {
   return UserListNotifier();
 });

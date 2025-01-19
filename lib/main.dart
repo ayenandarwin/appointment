@@ -24,6 +24,8 @@
 //   }
 // }
 
+import 'package:appointment_manager/screen/appoint_view.dart';
+import 'package:appointment_manager/screen/appointment_list_screen.dart';
 import 'package:appointment_manager/screen/user_api_intergration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,7 +45,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SQLite CRUD',
       debugShowCheckedModeBanner: false,
-      home: UserListScreen(),
+     // home: UserListScreen(),
+      home: AppointmentListScreen(),
       //home: HomeScreen(),
     );
   }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:appointment_manager/db/appointment_db.dart';
 import 'package:appointment_manager/models/appointment.dart';
 
+import '../provider/user_provider.dart';
 import '../view/appointment_list.dart';
 import 'appointment_detail_screen.dart';
 
@@ -24,6 +25,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   final TextEditingController _companyController = TextEditingController();
   final TextEditingController _customerNameController = TextEditingController();
   final APIservices apiService = APIservices();
+
   List<Appointment> appointments = [];
 
   late Future<List<Appointment>> _appointmentsList;
@@ -31,7 +33,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
   @override
   void initState() {
     super.initState();
-    _loadAppointments();
+    // _loadAppointments();
 
     _checkConnection();
 
@@ -41,17 +43,32 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
         .listen((List<ConnectivityResult> result) {
       _updateConnectionStatus(result);
     });
-    if (_isConnected) {
-      fetchAppointments();
-    } else {
-      _appointmentsList = AppointmentDatabase.instance.readAllAppointments();
-    }
+    Future.delayed(Duration(seconds: 2)).then((value) {
+      if (_isConnected) {
+        _loadAppointments();
+      } else {
+        _loadAppointmentsFromLocal();
+      }
+    });
   }
 
   _loadAppointments() async {
     try {
       List<Appointment> fetchedAppointments =
           await apiService.getAppointments();
+      setState(() {
+        appointments = fetchedAppointments;
+      });
+    } catch (e) {
+      // Handle error
+      print("Error loading appointments: $e");
+    }
+  }
+
+  _loadAppointmentsFromLocal() async {
+    try {
+      List<Appointment> fetchedAppointments =
+          await AppointmentDatabase.instance.readAllAppointments();
       setState(() {
         appointments = fetchedAppointments;
       });
@@ -256,6 +273,7 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //final users = ref.watch(userListProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -268,21 +286,32 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
         itemCount: appointments.length,
         itemBuilder: (context, index) {
           final appointment = appointments[index];
-          return ListTile(
-            title: Text(appointment.title),
-            subtitle: Text('${appointment.date} - ${appointment.date}'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () => _updateAppointment(appointment),
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: ListTile(
+                title: Text(appointment.title),
+                subtitle: Text('${appointment.date} - ${appointment.date}'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: Constant.textColor,
+                      ),
+                      onPressed: () => _updateAppointment(appointment),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onPressed: () => _deleteAppointment(appointment.id!),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => _deleteAppointment(appointment.id),
-                ),
-              ],
+              ),
             ),
           );
         },
@@ -338,12 +367,20 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
 
         onPressed: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AppointmentScreen()
+          MaterialPageRoute(
+              builder: (context) => AppointmentScreen(
+                    totalAppointment: appointments.length,
+                  )
               //MapScreen(),
               ),
-        ),
+        ).then((value) {
+          _loadAppointments();
+        }),
         // onPressed: _createAppointment,
-        child: Icon(Icons.add,color: Colors.white,),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }

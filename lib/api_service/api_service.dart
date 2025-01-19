@@ -7,7 +7,7 @@ const apiKey = "f95a6d45558dee5ab593965b75e80dfd";
 
 class APIservices {
   // Corrected baseUrl with the http:// prefix
-  final baseUrl = "http://192.168.1.8:3000/appointments";
+  final baseUrl = "http://192.168.100.4:3000/appointments";
   //final baseUrl = "http://localhost:3000/appointments";
   // final baseUrl = "https://mockapi.com/appointments";
 
@@ -60,8 +60,22 @@ class APIservices {
   }
 
   Future<void> deleteAppointment(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$id'));
-    if (response.statusCode != 200) {
+    // final url = Uri.parse('$baseUrl/id');
+
+    // // Print the URL to ensure it's correct
+    // print('Deleting appointment with URL: $url');
+
+    // final response = await http.delete(url);
+
+  final url = 'http://192.168.100.4:3000/appointments/$id'; // Using string interpolation
+
+  final response = await http.delete(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      print('Appointment deleted successfully');
+    } else {
+      // Print the response body to see any error message
+      print('Failed to delete appointment: ${response.body}');
       throw Exception('Failed to delete appointment');
     }
   }
