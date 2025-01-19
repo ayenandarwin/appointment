@@ -1,0 +1,22 @@
+{
+  "appointments": [
+    {
+      "id": 1,
+      "title": "test",
+      "customer_name": "mg mg",
+      "company": "IT Company",
+      "description": "testing",
+      "date_time": "18/01/2025",
+      "location": "34734"
+    },
+    {
+      "id": 2,
+      "title": "test two",
+      "customer_name": "aye aye",
+      "company": "Phone Sale",
+      "description": "testing two",
+      "date_time": "18/01/2025",
+      "location": "2022"
+    }
+  ]
+}

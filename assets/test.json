@@ -1,0 +1,11 @@
+{
+    "appointments": [
+      {
+        "id": 1,
+        "name": "John Doe",
+        "date": "2025-01-20",
+        "time": "10:00 AM"
+      }
+    ]
+  }
+  
